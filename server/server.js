@@ -36,6 +36,7 @@ mongoose.connect(process.env.MONGO_URL)
     })
     app.get('/images', async (req, res) => {
         const images = await Image.find()
+        console.log(images)
         res.json(images)
     })
     app.listen(PORT, () => console.log('Express listening on PORT' + PORT))

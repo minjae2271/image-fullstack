@@ -1,10 +1,12 @@
-import React, { useState }  from 'react'
+import React, { useState, useContext }  from 'react'
 import axios from 'axios'
 import './uploadForm.css'
 import { toast } from 'react-toastify'
 import ProgressBar from './ProgressBar'
+import { ImageContext } from '../context/ImageContext'
 
 const UploadForm = () => {
+    const [images, setImages] = useContext(ImageContext)
     const defaultFileName = 'please upload file'
     const [file, setFile] = useState(null)
     const [fileName, setFileName] = useState(defaultFileName)
@@ -17,7 +19,6 @@ const UploadForm = () => {
         const fileReader = new FileReader()
         fileReader.readAsDataURL(imageFile)
         fileReader.onload = (e) => setPreview(e.target.result)
-
     }
     const onSubmit = async (e) => {
         e.preventDefault()
@@ -32,6 +33,10 @@ const UploadForm = () => {
                     setPercent(Math.round(100 * progressEvent.loaded / progressEvent.total))
                 }
             })
+            setImages((prev) => {
+                setImages([ ...prev, res.data])
+            })
+            setPreview(null)
             toast.success('success')
             setTimeout(() => {
                 setPercent(0)
@@ -46,7 +51,7 @@ const UploadForm = () => {
     }
     return (
         <form onSubmit={onSubmit}>
-            <img className='image-preview' src={preview} alt='preview' />
+            <img className={preview ? 'image-preview-show' : 'image-preview'} src={preview} alt='preview' />
         <ProgressBar percent={percent} />
         <div className='image-dropper'>
             {fileName}
